@@ -1,0 +1,91 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hero-seguros-app
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=HeroSeguros
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:8000
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=hero_seguros
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - CACHE_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=null
+      - REDIS_PORT=6379
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - hero-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: hero-seguros-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hero_seguros
+      MYSQL_PASSWORD: password
+      MYSQL_USER: hero_user
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - "3306:3306"
+    networks:
+      - hero-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: hero-seguros-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - hero-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 20s
+      retries: 10
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: hero-seguros-phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - hero-network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  hero-network:
+    driver: bridge
