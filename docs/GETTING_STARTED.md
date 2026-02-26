@@ -35,6 +35,7 @@ docker-compose ps
 ```
 
 **Resultado esperado:**
+
 ```
 NAME                    STATUS
 hero-seguros-app        Up 2 seconds
@@ -108,7 +109,8 @@ exit
 Depois editar cada migration (em `database/migrations/`) para adicionar os campos:
 
 **User Migration:**
-```php
+
+```bash
 public function up()
 {
     Schema::create('users', function (Blueprint $table) {
@@ -124,7 +126,8 @@ public function up()
 ```
 
 **Destination Migration:**
-```php
+
+```bash
 public function up()
 {
     Schema::create('destinations', function (Blueprint $table) {
@@ -140,7 +143,8 @@ public function up()
 ```
 
 **Plan Migration:**
-```php
+
+```bash
 public function up()
 {
     Schema::create('plans', function (Blueprint $table) {
@@ -155,7 +159,8 @@ public function up()
 ```
 
 **Quotation Migration:**
-```php
+
+```bash
 public function up()
 {
     Schema::create('quotations', function (Blueprint $table) {
@@ -174,7 +179,8 @@ public function up()
 ```
 
 **RiskFactor Migration:**
-```php
+
+```bash
 public function up()
 {
     Schema::create('risk_factors', function (Blueprint $table) {
@@ -189,6 +195,7 @@ public function up()
 ```
 
 Depois rodar:
+
 ```bash
 docker-compose exec app php artisan migrate
 ```
@@ -198,7 +205,8 @@ docker-compose exec app php artisan migrate
 Editar cada Model (em `app/Models/`) para adicionar relacionamentos:
 
 **User.php:**
-```php
+
+```bash
 public function quotations()
 {
     return $this->hasMany(Quotation::class);
@@ -206,7 +214,8 @@ public function quotations()
 ```
 
 **Destination.php:**
-```php
+
+```bash
 public function quotations()
 {
     return $this->hasMany(Quotation::class);
@@ -219,7 +228,8 @@ public function riskFactors()
 ```
 
 **Quotation.php:**
-```php
+
+```bash
 public function user()
 {
     return $this->belongsTo(User::class);
@@ -258,6 +268,7 @@ exit
 Implementar factories e seeders para ter dados para testes.
 
 Rodar seed:
+
 ```bash
 docker-compose exec app php artisan migrate --seed
 ```
@@ -332,7 +343,8 @@ docker-compose exec app php artisan make:request LoginRequest
 #### Dia 5: Rotas e Testes
 
 Editar `routes/api.php`:
-```php
+
+```bash
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
@@ -383,6 +395,7 @@ docker-compose exec app php artisan make:test Feature/AuthTest
 ## 💡 Dicas Importantes
 
 ### ✅ Faça isso:
+
 - **TDD**: Escreva testes ANTES do código
 - **Commits frequentes**: Commit a cada feature
 - **Branches**: Use feature branches (`git checkout -b feature/nome`)
@@ -390,6 +403,7 @@ docker-compose exec app php artisan make:test Feature/AuthTest
 - **Testes passando**: Nunca commitar com testes falhando
 
 ### ❌ Evite:
+
 - Mudar código sem testes
 - Commits gigantes (um feature = um commit)
 - Pular testes "para depois"
@@ -458,6 +472,7 @@ R: Com melhorias sim (Nginx, SSL, env vars sensíveis, etc). Mas para portfólio
 **Pronto para começar? 🚀 Bora codar!**
 
 Próximo comando:
+
 ```bash
 docker-compose up -d
 docker-compose exec app bash
